@@ -1,0 +1,15 @@
+{
+  "name": "maze-treasure",
+  "version": "1.0.0",
+  "description": "迷宮尋寶：1–6 人手機連線的冥想益智迷宮遊戲（Node.js，零外部依賴）",
+  "private": true,
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node test/smoke.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

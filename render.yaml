@@ -1,0 +1,21 @@
+services:
+  - type: web
+    name: maze-treasure
+    runtime: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /healthz
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: 22
+      - key: NODE_ENV
+        value: production
+    # 免費方案的磁碟重啟後會清空，排行榜紀錄也會消失。
+    # 若要永久保存紀錄：升級付費方案，取消下面註解，並把 DATA_DIR 指到磁碟路徑。
+    # disk:
+    #   name: maze-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+    # 並新增環境變數 DATA_DIR=/var/data

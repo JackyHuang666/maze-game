@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#0d1819">
+<title>迷宮尋寶</title>
+<meta name="description" content="1 到 6 人用手機當方向鍵，在只看得見局部的迷宮中合作把寶石搬進同色寶箱。">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230d1819'/%3E%3Cpath d='M8 8h16v16H8zM13 13h6v6h-6z' fill='none' stroke='%238fd9b8' stroke-width='2'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap">
+<link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<main id="app">
+<section id="v-home" class="view">
+  <div class="home">
+    <div class="rings"></div>
+    <p class="eyebrow">多人冥想小遊戲</p>
+    <h1>迷宮尋寶</h1>
+    <p class="lead">一到六人同行，每個人只看得見身邊一小片路。先停下來看，再一起把每顆寶石搬進同顏色的寶箱。</p>
+    <div class="choices">
+      <button id="b-host" class="big">開啟大螢幕<small>在電腦、平板或電視上建立房間，顯示整張地圖與最短紀錄</small></button>
+      <button id="b-join" class="big">用手機加入<small>輸入四位數房號，手機變成上下左右方向鍵</small></button>
+    </div>
+    <p id="homeNote" class="note"></p>
+  </div>
+</section>
+
+<section id="v-join" class="view" hidden>
+  <div class="joinbox">
+    <h2>加入房間</h2>
+    <label class="fld">房號（大螢幕上的四位數）<input id="jcode" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000"></label>
+    <label class="fld">你的名字<input id="jname" maxlength="8" autocomplete="off" placeholder="最多八個字"></label>
+    <button id="jgo" class="big go">加入</button>
+    <p id="jerr" class="note"></p>
+    <button id="jback" class="link">返回</button>
+  </div>
+</section>
+
+<section id="v-host" class="view" hidden>
+  <div class="hwrap">
+    <div class="stage"><canvas id="hc"></canvas><div id="hov" class="ov"></div></div>
+    <aside class="side">
+      <div class="topline">
+        <div><span class="lbl">房號</span><b id="hcode" class="code">----</b></div>
+        <div class="clock" id="hclock">0:00.0</div>
+      </div>
+      <div class="joinrow" id="joinRow" hidden>
+        <canvas id="qrSmall" class="qrs" aria-label="加入房間的 QR Code"></canvas>
+        <div class="jtext">
+          <p>用手機掃描 QR Code，或輸入房號加入。遊戲進行中也能加入。</p>
+          <div class="linkrow"><input id="linkBox" readonly aria-label="邀請連結"><button id="copyBtn" class="mini">複製連結</button></div>
+          <p id="netNote" class="note"></p><button id="retryBtn" class="mini" hidden>重新連線</button>
+        </div>
+      </div>
+      <div id="lobbyCtl">
+        <div><h3>環境</h3><div id="themeGrid" class="tgrid"></div></div>
+        <div><h3>複雜程度</h3><div id="lvGrid" class="lgrid"></div></div>
+        <label class="fld">隊伍名稱（單人時使用玩家名字）<input id="teamName" maxlength="12" placeholder="例如：第一組"></label>
+        <label class="chk"><input type="checkbox" id="locChk">加入本機玩家（方向鍵或 WASD）</label>
+        <button id="startBtn" class="big go" disabled>等待玩家加入</button>
+      </div>
+      <div><h3>玩家</h3><div id="plist" class="plist"></div></div>
+      <div class="board">
+        <div class="bh"><h3>最短紀錄</h3><div class="seg" id="bScope"><button data-s="this" class="on">此地圖與難度</button><button data-s="all">全部</button></div></div>
+        <ol id="bList"></ol>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<section id="v-pad" class="view" hidden>
+  <div class="padwrap">
+    <div class="ptop"><span id="pname"></span><span id="pclock" class="clock sm">0:00.0</span></div>
+    <div class="stagebox"><div class="pstage"><canvas id="pc"></canvas><div id="pov" class="ov"></div></div></div>
+    <div class="modewrap"><div class="seg mode" id="modeSeg"><button data-m="0" class="on">推</button><button data-m="1">抓</button></div><p id="modeNote" class="note">推：往寶石的方向走，把寶石推開。</p></div>
+    <p id="hint" class="note"></p>
+    <div class="dpad" id="dpad">
+      <button data-d="0" aria-label="上"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 15l7-7 7 7"/></svg></button>
+      <button data-d="2" aria-label="左"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+      <button data-d="3" aria-label="右"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+      <button data-d="1" aria-label="下"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 9l7 7 7-7"/></svg></button>
+    </div>
+    <button id="resetBtn" class="link">全部寶石回到出發位置</button>
+  </div>
+</section>
+</main>
+<script src="/js/game.js"></script>
+<script src="/js/render.js"></script>
+<script src="/js/qr.js"></script>
+<script src="/js/app.js"></script>
+</body>
+</html>
